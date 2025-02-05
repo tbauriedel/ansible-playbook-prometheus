@@ -1,0 +1,5 @@
+---
+- ansible.builtin.import_playbook: playbooks/hosts.yml
+- ansible.builtin.import_playbook: playbooks/node-exporter.yml
+- ansible.builtin.import_playbook: playbooks/prometheus-server.yml
+- ansible.builtin.import_playbook: playbooks/grafana-server.yml

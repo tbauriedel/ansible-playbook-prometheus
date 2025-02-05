@@ -1,0 +1,14 @@
+[all]
+prom-server     ansible_user=debian     ansible_host=prom-server
+prom-client-1   ansible_user=debian     ansible_host=prom-client-1
+prom-client-2   ansible_user=debian     ansible_host=prom-client-2
+
+[prometheus-server]
+prom-server     ansible_user=debian     ansible_host=prom-server
+
+[node-exporter]
+prom-client-1   ansible_user=debian     ansible_host=prom-client-1
+prom-client-2   ansible_user=debian     ansible_host=prom-client-2
+
+[grafana-server]
+prom-server     ansible_user=debian     ansible_host=prom-server

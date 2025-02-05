@@ -1,0 +1,48 @@
+---
+- hosts: node-exporter
+  become: true
+  pre_tasks:
+    - name: "Create system group {{ node_exporter_system_group }}"
+      ansible.builtin.group:
+        name: "{{ node_exporter_system_group }}"
+        system: true
+        state: present
+
+    - name: "Create system user {{ node_exporter_system_user }}"
+      ansible.builtin.user:
+        name: "{{ node_exporter_system_user }}"
+        system: true
+        shell: "/usr/sbin/nologin"
+        group: "{{ node_exporter_system_group }}"
+        home: "{{ node_exporter_config_dir }}"
+        create_home: false
+
+    - name: Create node_exporter cert dir
+      ansible.builtin.file:
+        path: "/etc/node_exporter/tls"
+        state: directory
+        owner: root
+        group: root
+
+    - name: Generate OpenSSL private key
+      community.crypto.openssl_privatekey:
+        path: /etc/node_exporter/tls/tls.pem
+        size: 4096
+        owner: "{{ node_exporter_system_user }}"
+        group: "{{ node_exporter_system_group }}"
+        mode: '0640'
+
+    - name: Generate Self Signed OpenSSL certificate
+      community.crypto.x509_certificate:
+        path: /etc/node_exporter/tls/tls.cert
+        privatekey_path: /etc/node_exporter/tls/tls.pem
+        provider: selfsigned
+        owner: "{{ node_exporter_system_user }}"
+        group: "{{ node_exporter_system_group }}"
+        mode: '0640'
+
+  roles:
+    - prometheus.prometheus.node_exporter
+
+  #post_tasks:
+  #- Verify interface is running

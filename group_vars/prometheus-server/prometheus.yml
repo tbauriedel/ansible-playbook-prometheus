@@ -1,0 +1,38 @@
+---
+prometheus_storage_retention: "15d"
+prometheus_web_config:
+  tls_server_config:
+    cert_file: /etc/prometheus/tls/tls.cert
+    key_file: /etc/prometheus/tls/tls.pem
+  basic_auth_users:
+    prometheus: "changeMe0815!"
+  http_server_config: {}
+prometheus_targets:
+  node-exporters:
+    - targets:
+        "{{ groups['node-exporter'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | map('regex_replace', '$', ':9100') | list }}"
+      labels:
+        group: node-exporters
+prometheus_scrape_configs:
+  - job_name: "prometheus"
+    metrics_path: "/metrics"
+    scheme: "https"
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: "prometheus"
+      password: "changeMe0815!"
+    static_configs:
+      - targets:
+          "{{ groups['prometheus-server'] | map('extract', hostvars, ['ansible_host']) | map('regex_replace', '$', ':9090') | list }}"
+  - job_name: "node-exporter"
+    metrics_path: "/metrics"
+    scheme: "https"
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: "prometheus-scraper"
+      password: "changeMe0815!"
+    file_sd_configs:
+      - files:
+          - "/etc/prometheus/file_sd/node-exporters.yml"

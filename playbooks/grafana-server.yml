@@ -1,0 +1,45 @@
+---
+- hosts: grafana-server
+  become: true
+  pre_tasks:
+    - name: "Create system group grafana"
+      ansible.builtin.group:
+        name: "grafana"
+        system: true
+        state: present
+
+    - name: "Create system user grafana"
+      ansible.builtin.user:
+        name: "grafana"
+        system: true
+        shell: "/bin/false"
+        group: "grafana"
+        home: "/usr/share/grafana"
+        create_home: false
+
+    - name: Create grafana cert dir
+      ansible.builtin.file:
+        path: "/etc/grafana/tls"
+        state: directory
+        owner: "grafana"
+        group: "grafana"
+
+    - name: Generate OpenSSL private key
+      community.crypto.openssl_privatekey:
+        path: /etc/grafana/tls/tls.pem
+        size: 4096
+        owner: "grafana"
+        group: "grafana"
+        mode: "0640"
+
+    - name: Generate Self Signed OpenSSL certificate
+      community.crypto.x509_certificate:
+        path: /etc/grafana/tls/tls.cert
+        privatekey_path: /etc/grafana/tls/tls.pem
+        provider: selfsigned
+        owner: "grafana"
+        group: "grafana"
+        mode: "0640"
+
+  roles:
+    - grafana.grafana.grafana

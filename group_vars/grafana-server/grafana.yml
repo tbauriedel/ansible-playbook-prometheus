@@ -1,0 +1,11 @@
+---
+grafana_ini:
+  server:
+    http_addr: "0.0.0.0"
+    http_port: 3000
+    cert_key: /etc/grafana/tls/tls.pem
+    cert_file: /etc/grafana/tls/tls.cert
+    protocol: https
+  security:
+    admin_user: admin
+    admin_password: "changeMe0815!"
