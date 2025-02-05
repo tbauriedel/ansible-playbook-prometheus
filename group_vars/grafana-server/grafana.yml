@@ -9,3 +9,15 @@ grafana_ini:
   security:
     admin_user: admin
     admin_password: "changeMe0815!"
+    secret_key: "chnageMe0815!"
+
+grafana_datasources:
+  - name: Prometheus
+    type: prometheus
+    url: https://localhost:9090
+    basicAuth: true
+    basicAuthUser: "prometheus"
+    secureJsonData:
+      basicAuthPassword: "changeMe0815!"
+    jsonData:
+      tlsSkipVerify: true
