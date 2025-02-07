@@ -36,3 +36,14 @@ prometheus_scrape_configs:
     file_sd_configs:
       - files:
           - "/etc/prometheus/file_sd/node-exporters.yml"
+  - job_name: "apache_exporter"
+    metrics_path: "/metrics"
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: "prometheus-scraper"
+      password: "changeMe0815!"
+    static_configs:
+      - targets:
+          "{{ groups['apache-exporter'] | map('extract', hostvars, ['ansible_host']) | map('regex_replace', '$', ':9117') | list }}"

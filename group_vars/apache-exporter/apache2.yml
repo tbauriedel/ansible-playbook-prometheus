@@ -1,0 +1,12 @@
+---
+apache_remove_default_vhost: true
+apache_create_vhosts: true
+apache_mods_enabled:
+  - status
+apache_vhosts:
+  - servername: "{{ ansible_fqdn}}"
+    extra_parameters: |
+      <Location /server-status>
+        SetHandler server-status
+        Require all granted
+      </Location>
