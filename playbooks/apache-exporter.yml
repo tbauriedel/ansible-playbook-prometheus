@@ -1,0 +1,46 @@
+---
+- hosts: apache-exporter
+  become: true
+  pre_tasks:
+    - name: "Create system group {{ apache_exporter_system_group }}"
+      ansible.builtin.group:
+        name: "{{ apache_exporter_system_group }}"
+        system: true
+        state: present
+
+    - name: "Create system user {{ apache_exporter_system_user }}"
+      ansible.builtin.user:
+        name: "{{ apache_exporter_system_user }}"
+        system: true
+        shell: "/usr/sbin/nologin"
+        group: "{{ apache_exporter_system_group }}"
+        home: "{{ apache_exporter_config_dir }}"
+        create_home: false
+
+    - name: Create apache_exporter cert dir
+      ansible.builtin.file:
+        path: "/etc/apache_exporter/tls"
+        state: directory
+        owner: root
+        group: root
+
+    - name: Generate OpenSSL private key
+      community.crypto.openssl_privatekey:
+        path: /etc/apache_exporter/tls/tls.pem
+        size: 4096
+        owner: "{{ apache_exporter_system_user }}"
+        group: "{{ apache_exporter_system_group }}"
+        mode: '0640'
+
+    - name: Generate Self Signed OpenSSL certificate
+      community.crypto.x509_certificate:
+        path: /etc/apache_exporter/tls/tls.cert
+        privatekey_path: /etc/apache_exporter/tls/tls.pem
+        provider: selfsigned
+        owner: "{{ apache_exporter_system_user }}"
+        group: "{{ apache_exporter_system_group }}"
+        mode: '0640'
+
+  roles:
+    - geerlingguy.apache
+    - prometheus.prometheus.apache_exporter

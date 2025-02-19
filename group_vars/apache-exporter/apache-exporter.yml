@@ -1,0 +1,6 @@
+---
+apache_exporter_tls_server_config:
+  cert_file: /etc/apache_exporter/tls/tls.cert
+  key_file: /etc/apache_exporter/tls/tls.pem
+apache_exporter_basic_auth_users:
+  prometheus-scraper: changeMe0815!

@@ -3,11 +3,14 @@
 Simple Ansible playbook to install the prometheus-stack.  
 The following componentes will be installed:  
 * node-exporter
+* apache-exporter
 * prometheus-server
 * grafana-server
 
 Pre-configured credentials:
 * Node Exporter
+  * Basic auth `prometheus-scraper` - `changeMe0815!`
+* Apache Exporter
   * Basic auth `prometheus-scraper` - `changeMe0815!`
 * Prometheus
   * Basic auth `prometheus` - `changeMe0815!`
